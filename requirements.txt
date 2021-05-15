@@ -1,3 +1,4 @@
+colorthief
 cython
 dash==1.19.0
 dash-bootstrap-components
@@ -5,8 +6,5 @@ dash-core-components
 dash-html-components
 Flask
 gunicorn
-matplotlib
-pandas
 requests
-scipy
 urllib3

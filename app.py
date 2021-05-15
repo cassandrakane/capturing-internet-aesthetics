@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from colorthief import ColorThief
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-import matplotlib.image as img
 import os
-import pandas as pd
 import random
 import re
 import requests
-from scipy.cluster.vq import whiten
-from scipy.cluster.vq import kmeans
 from urllib.request import urlopen
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
@@ -30,16 +27,13 @@ app.layout = html.Div(children=[
             html.P("Color palettes may take a few minutes to generate...", style={ 'margin-top' : '10px' })
         ], width=7),
         dbc.Col([
-            html.Div(id='container-button-basic')
+            html.Div(id='container-button-basic', style={'display' : 'flex', 'flex-wrap' : 'wrap'})
         ], width=4)
     ])
 ], style={ 'margin' : '25px' })
 
 def make_color(color):
-    return html.Div(" ", className='colorBox', style={ 'margin' : '3px', 'padding' : '10px', 'background-color' : color })
-
-def make_img(imgsrc):
-    return 
+    return html.Div(" ", className='colorBox', style={ 'width' : '10px', 'margin' : '3px', 'padding' : '10px', 'background-color' : color })
 
 @app.callback(
     Output('container-button-basic', 'children'),
@@ -54,38 +48,15 @@ def update_output(n_clicks, value):
         except Exception as e:
             return "Error. The Instagram API limit has been reached; please wait a few hours or switch your internet network."
 
-        nodes = res["graphql"]["hashtag"]["edge_hashtag_to_top_posts"]["edges"]
+        nodes = res["graphql"]["hashtag"]["edge_hashtag_to_media"]["edges"]
         for n in nodes:
-            img_file = img.imread(urlopen(n["node"]["thumbnail_src"]), 0)
-            r = []
-            g = []
-            b = []
-            for row in img_file:
-                for temp_r, temp_g, temp_b in row:
-                    r.append(temp_r)
-                    g.append(temp_g)
-                    b.append(temp_b)
-            img_df = pd.DataFrame({'red' : r,
-                                   'green' : g,
-                                   'blue' : b})
-            img_df['scaled_color_red'] = whiten(img_df['red'])
-            img_df['scaled_color_blue'] = whiten(img_df['blue'])
-            img_df['scaled_color_green'] = whiten(img_df['green'])
-            cluster_centers, _ = kmeans(img_df[['scaled_color_red',
-                                                'scaled_color_blue',
-                                                'scaled_color_green']], 3)
-            red_std, green_std, blue_std = img_df[['red',
-                                                   'green',
-                                                   'blue']].std()
-            for cluster_center in cluster_centers:
-                red_scaled, green_scaled, blue_scaled = cluster_center
-                dominant_colors.append("rgb({}, {}, {})".format(int(red_scaled * red_std),
-                                                                int(green_scaled * green_std),
-                                                                int(blue_scaled * blue_std)))
+            color_thief = ColorThief(urlopen(n["node"]["thumbnail_src"]))
+            palette = color_thief.get_palette(color_count=3)
+            dominant_colors.extend(palette)
     random.shuffle(dominant_colors)
     divs = []
     for color in dominant_colors:
-        divs.append(make_color(color))
+        divs.append(make_color("rgb({}, {}, {})".format(color[0], color[1], color[2])))
     return divs
 
 if __name__ == '__main__':
