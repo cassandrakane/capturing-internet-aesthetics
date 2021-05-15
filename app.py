@@ -12,7 +12,6 @@ import re
 import requests
 from scipy.cluster.vq import whiten
 from scipy.cluster.vq import kmeans
-from termcolor import colored
 from urllib.request import urlopen
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
