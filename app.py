@@ -51,7 +51,7 @@ def update_output(n_clicks, value):
         res_temp = None;
         res = None
         try:
-            res_temp = requests.get("https://www.instagram.com/explore/tags/{}/?__a=1".format(re.sub(r'[^\w\s]', '', value)), headers = {'User-agent': 'ig_hashtag_to_top_posts_0.1'}).json()
+            res_temp = requests.get("https://www.instagram.com/explore/tags/{}/?__a=1".format(re.sub(r'[^\w\s]', '', value)), headers = {'User-agent': 'ig_hashtag_to_top_posts_0.1'})
             res = res_temp.json()
         except Exception as e:
             # return "Error. The Instagram API limit has been reached; please wait a few hours or switch your internet network."
