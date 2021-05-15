@@ -11,7 +11,6 @@ import pandas as pd
 import random
 import re
 import requests
-import sys
 from scipy.cluster.vq import whiten
 from scipy.cluster.vq import kmeans
 from urllib.request import urlopen
@@ -52,10 +51,9 @@ def update_output(n_clicks, value):
         res = None
         try:
             res = requests.get("https://www.instagram.com/explore/tags/{}/?__a=1".format(re.sub(r'[^\w\s]', '', value)), headers = {'User-agent': 'ig_hashtag_to_top_posts_0.1'}).json()
-        except:
-            e = sys.exc_info()[0]
+        except Exception as e:
             # return "Error. The Instagram API limit has been reached; please wait a few hours or switch your internet network."
-            return "Error: " + str(e)
+            return "Error: " + repr(e)
 
         nodes = res["graphql"]["hashtag"]["edge_hashtag_to_top_posts"]["edges"]
         for n in nodes:
@@ -93,4 +91,4 @@ def update_output(n_clicks, value):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run_server(debug=True, host='0.0.0.0', port=port)
+    app.run_server(debug=False, host='0.0.0.0', port=port)
