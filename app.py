@@ -55,7 +55,7 @@ def update_output(n_clicks, value):
         except:
             e = sys.exc_info()[0]
             # return "Error. The Instagram API limit has been reached; please wait a few hours or switch your internet network."
-            return "Error: " + e
+            return "Error: " + str(e)
 
         nodes = res["graphql"]["hashtag"]["edge_hashtag_to_top_posts"]["edges"]
         for n in nodes:
