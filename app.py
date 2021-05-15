@@ -16,6 +16,7 @@ from termcolor import colored
 from urllib.request import urlopen
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SKETCHY])
+app.title = 'Capturing Internet Aesthetics'
 
 app.layout = html.Div(children=[
     dbc.Row([
