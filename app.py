@@ -6,6 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import matplotlib.image as img
+import os
 import pandas as pd
 import random
 import re
@@ -88,4 +89,5 @@ def update_output(n_clicks, value):
     return divs
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    port = int(os.environ.get('PORT', 5000))
+    app.run_server(debug=False, host='0.0.0.0', port=port)
